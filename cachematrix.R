@@ -5,7 +5,7 @@
 ## This function creates a special "matrix" object that can cache its inverse.
 ## The special matirx has the following functions:
 ## reset: sets the modified matrix and renitialize cached inverse to NULL.
-## computeinverse: compute the inverse of the matrix using solve method 
+## computeinverse: computes the inverse of the matrix using solve method 
 ##                 and caches the computed value in a variable.
 ## getinverse: returns the cached inverse if already computed NULL otherwise
 

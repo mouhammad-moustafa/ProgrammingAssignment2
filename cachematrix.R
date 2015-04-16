@@ -3,35 +3,38 @@
 
 
 ## This function creates a special "matrix" object that can cache its inverse.
-## The special matirx has the following functions:
-## reset: sets the modified matrix and renitialize cached inverse to NULL.
-## computeinverse: computes the inverse of the matrix using solve method 
-##                 and caches the computed value in a variable.
-## getinverse: returns the cached inverse if already computed NULL otherwise
+## The special matirx is really a list containing a function to:
+## set: set the value of the matrix and renitialize cached inverse to NULL.
+## get: get the value of the matrix
+## setinverse: set the value of the inverse
+## getinverse: get the cached inverse if already computed NULL otherwise
 
 makeCacheMatrix <- function(x = matrix()) {
-        inverse <- NULL
-        reset <- function(y) {
+        inv <- NULL
+        set <- function(y) {
                 x <<- y
-                inverse <<- NULL
+                inv <<- NULL
         }
         
-        computeinverse <- function(){
-                inverse <<- solve(x)
-                inverse
+        get <- function() x
+        
+        setinverse <- function(inverse){
+                inv <<- inverse
         }
         
-        getinverse <- function() inverse
+        getinverse <- function() inv
         
-        list(reset = reset, getinverse = getinverse,
-             computeinverse = computeinverse)
+        list(set = set, get = get, getinverse = getinverse,
+             setinverse = setinverse)
 }
 
 
 ## This function computes the inverse of the special "matrix" returned by makeCacheMatrix above.
 ## If the inverse has already been calculated (and the matrix has not changed), 
 ## Then the cachesolve retrieve the inverse from the cache.
-## Else the cachesolve compute the inverse of a square matrix the solve function in R
+## Else the cachesolve compute the inverse of a square matrix using solve method 
+## and caches the computed value in a variable.
+## We assume that the matrix supplied is always invertible.
 
 cacheSolve <- function(x, ...) {
         ## Return a matrix that is the inverse of 'x'
@@ -40,6 +43,8 @@ cacheSolve <- function(x, ...) {
                 message("getting cached data")
                 return(inverse)
         }
-        inverse <- x$computeinverse()
+        data <- x$get()
+        inverse <- solve(data, ...)
+        x$setinverse(inverse)
         inverse
 }
